@@ -39,8 +39,29 @@ echo.
 :: Installer dépendances
 echo [3/3] Installation des dependances...
 call venv\Scripts\activate.bat
-pip install --quiet requests pytz pymodbus
-echo   OK: requests, pytz, pymodbus
+pip install --quiet --upgrade pip
+pip install --quiet -r requirements.txt
+echo   OK: dependances installees depuis requirements.txt
+echo.
+
+:: Generer .env par defaut
+echo [4/4] Generation du fichier .env...
+if exist ".env" (
+    echo   .env existe deja, skip...
+) else (
+    (
+        echo # Configuration Hydro-Quebec Modbus
+        echo TIMEZONE=America/Montreal
+        echo MODBUS_HOST=0.0.0.0
+        echo MODBUS_PORT=5020
+        echo POLLING_INTERVAL=300
+        echo USE_MOCK_DATA=true
+        echo API_EVENTS=https://donnees.hydroquebec.com/api/explore/v2.1/catalog/datasets/evenements-pointe/records
+        echo API_OFFRES=https://donnees.hydroquebec.com/api/explore/v2.1/catalog/datasets/evenements-de-pointe-offres-disponibles/records
+        echo MAPPING_FILE=modbus_mapping.json
+    ) > .env
+    echo   .env cree avec configuration par defaut
+)
 echo.
 
 echo ============================================================
